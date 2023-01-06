@@ -8,12 +8,12 @@ MAX_TWEETS_SAVED = 10000
 
 class HashtagStreamListener(tweepy.StreamingClient):
 
-    #def __init__(self, handler):
-    #    self.handler = handler
-    #    tweepy.Stream.__init__(self)
+    def __init__(self, handler, bearer_token):
+        self.handler = handler
+        tweepy.StreamingClient.__init__(self, bearer_token)
 
     def on_tweet(self, status):
-        logger.debug("Received tweet: {}".format(status.text))
+        logger.info("Received tweet: {}".format(status.text))
         self.handler._increment_tweet_counter()
         self.handler._save_tweet(status)
 
@@ -59,9 +59,23 @@ class TwitterClient:
     def _setup_stream(self):
         logger.info("Starting twitter steam")
 
-        s_listener = HashtagStreamListener(self)
-        stream = tweepy.StreamingClient(bearer_token=twitter["bearer_token"], listener=s_listener)
-        stream.filter(track=self.tags, is_async=True)
+        stream = HashtagStreamListener(self,bearer_token=twitter["bearer_token"])
+
+        # Reset rules
+        ruleList = []
+        rules = stream.get_rules()
+ 
+        for rule in rules.data:
+          ruleList.append(rule.id)
+        
+        stream.delete_rules(ruleList)
+
+        # Add new rules
+        stream.add_rules(tweepy.StreamRule(' OR '.join(self.tags)))
+        rules = stream.get_rules()
+        logger.info("current rules:")
+        logger.info(rules)
+        stream.filter()
 
     def _increment_tweet_counter(self):
         self.curr_tweets += 1
