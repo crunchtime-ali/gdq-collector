@@ -27,7 +27,7 @@ twitter = TwitterClient(tags=settings.TWITTER_TAGS)
 twitch = TwitchClient()
 
 
-def _connect_to_postgress():
+def _connect_to_postgres():
     for _ in range(10):
         try:
             conn = psycopg2.connect(**credentials.postgres)
@@ -40,7 +40,7 @@ def _connect_to_postgress():
 
 
 # Setup db connection (retry up to 10 times)
-conn = _connect_to_postgress()
+conn = _connect_to_postgres()
 
 
 def results_to_psql(tweets, viewers, chats, emotes, donators, donations):
@@ -177,7 +177,7 @@ def refresh_timeseries():
     curr_d = utils.try_execute(donations.scrape, DonationResult())
     num_tweets = twitter.num_tweets()
     viewers = twitch.get_num_viewers()
-    chats, emotes = twitch.get_message_count(), twitch.get_emote_count()
+    chats, emotes = twitch.get_message_count(), 0
     results_to_psql(
         num_tweets,
         viewers,

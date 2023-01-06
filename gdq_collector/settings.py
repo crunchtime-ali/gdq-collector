@@ -14,7 +14,7 @@ TWITCH_HOST = "irc.twitch.tv"
 TWITCH_PORT = 6667
 
 # Update this value to change the current event:
-EVENT_SHORTHAND = "SGDQ2022"
+EVENT_SHORTHAND = "AGDQ2023"
 
 # The following should stay pretty stable between events
 DONATION_URL = (
