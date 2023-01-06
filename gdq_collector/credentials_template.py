@@ -13,12 +13,13 @@ postgres = {
     "password": ""
 }
 
-# Use this site to generate oauth token:
-# https://twitchapps.com/tmi/
+# Use this site to generate oauth token for the IRC chat https://twitchapps.com/tmi/
+# Use the Twitch CLI command `twitch token` to get an App access token
 twitch = {
     "nick": "",
     "oauth": "",
-    "clientid": ""
+    "clientid": "",
+    "app_access_token": ""
 }
 
 # AWS credentials for reporting logs to Cloudwatch
