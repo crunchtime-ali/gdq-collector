@@ -341,7 +341,6 @@ if __name__ == "__main__":
 
     # Setup Twitter if not disabled
     if args.tracker in ["timeseries", "twitter"] or args.tracker is None:
-        twitter.auth()
         twitter.start()
     else:
         logger.info("Not starting TwitterClient")
