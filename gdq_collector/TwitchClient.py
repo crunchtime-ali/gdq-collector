@@ -97,7 +97,7 @@ class TwitchClient(irc.client.SimpleIRCClient):
     def get_num_viewers(self):
         """ Queries the TwitchAPI for current number of viewers of channel """
         headers = {
-            "Authorization": credentials.twitch["app_access_token"],
+            "Authorization": "Bearer " + credentials.twitch["app_access_token"],
             "Client-ID": credentials.twitch["clientid"],
         }
 
