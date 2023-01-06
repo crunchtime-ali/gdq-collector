@@ -101,11 +101,6 @@ class TwitchClient(irc.client.SimpleIRCClient):
             "Client-ID": credentials.twitch["clientid"],
         }
 
-        headers = {
-            "Authorization": ,
-            "Client-ID": credentials.twitch["clientid"],
-        }
-
         req = requests.get(
             "https://api.twitch.tv/helix/streams",
             headers=headers,
