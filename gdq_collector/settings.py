@@ -1,5 +1,5 @@
 TWITTER_TAGS = [
-    "sgdq2022",
+    "agdq2023",
     "gamesdonequick.com",
     "agdq",
     "sgdq",

@@ -6,13 +6,13 @@ logger = logging.getLogger(__name__)
 MAX_TWEETS_SAVED = 10000
 
 
-class HashtagStreamListener(tweepy.StreamListener):
+class HashtagStreamListener(tweepy.Stream):
 
     def __init__(self, handler):
         self.handler = handler
-        tweepy.StreamListener.__init__(self)
+        tweepy.Stream.__init__(self)
 
-    def on_status(self, status):
+    def on_tweet(self, status):
         logger.debug("Received tweet: {}".format(status.text))
         self.handler._increment_tweet_counter()
         self.handler._save_tweet(status)
@@ -34,15 +34,6 @@ class TwitterClient:
         self.curr_tweets = 0
         self.tweets = []
         self.api = None
-
-    def auth(self):
-        auth = tweepy.OAuthHandler(
-            twitter["consumer_key"], twitter["consumer_secret"]
-        )
-        auth.set_access_token(
-            twitter["access_token"], twitter["access_token_secret"]
-        )
-        self.api = tweepy.API(auth)
 
     def num_tweets(self):
         """
@@ -72,7 +63,7 @@ class TwitterClient:
             raise RuntimeError("Client not authenticated!")
 
         s_listener = HashtagStreamListener(self)
-        stream = tweepy.Stream(auth=self.api.auth, listener=s_listener)
+        stream = tweepy.StreamingClient(twitter["bearer_token"], listener=s_listener)
         stream.filter(track=self.tags, is_async=True)
 
     def _increment_tweet_counter(self):
