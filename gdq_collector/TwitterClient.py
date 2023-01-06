@@ -65,8 +65,10 @@ class TwitterClient:
         ruleList = []
         rules = stream.get_rules()
  
-        for rule in rules.data:
-          ruleList.append(rule.id)
+        if rules.data != None and len(rules.data) > 0:
+            for rule in rules.data:
+                ruleList.append(rule.id)
+            stream.delete_rules(ruleList)
         
         stream.delete_rules(ruleList)
 
@@ -75,7 +77,7 @@ class TwitterClient:
         rules = stream.get_rules()
         logger.info("current rules:")
         logger.info(rules)
-        stream.filter()
+        thread = stream.filter(threaded=True)
 
     def _increment_tweet_counter(self):
         self.curr_tweets += 1
