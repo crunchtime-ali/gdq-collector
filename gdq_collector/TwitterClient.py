@@ -33,7 +33,6 @@ class TwitterClient:
         self.tags = tags
         self.curr_tweets = 0
         self.tweets = []
-        self.api = None
 
     def num_tweets(self):
         """
@@ -59,8 +58,6 @@ class TwitterClient:
 
     def _setup_stream(self):
         logger.info("Starting twitter steam")
-        if not self.api:
-            raise RuntimeError("Client not authenticated!")
 
         s_listener = HashtagStreamListener(self)
         stream = tweepy.StreamingClient(twitter["bearer_token"], listener=s_listener)
