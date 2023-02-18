@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-BUCKET = os.environ.get("S3_CACHE_BUCKET", "storage.api.gdqstat.us")
+BUCKET = os.environ.get("S3_CACHE_BUCKET", "storage.gdqstats.com")
 s3 = boto3.resource("s3")
 
 logger.info("Connecting to postgres...")

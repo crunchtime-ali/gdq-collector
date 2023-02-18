@@ -71,6 +71,5 @@ docker-compose build
 # Setup sudo crontab to restart docker containers
 sudo su
 cat <(crontab -l) <(echo "0 */2 * * * docker container restart gdq-collector_timeseries_1") | crontab -
-cat <(crontab -l) <(echo "30 */4 * * * docker container restart gdq-collector_timeseries_2") | crontab -
 cat <(crontab -l) <(echo "15 */12 * * * docker container restart gdq-collector_twitch_1") | crontab -
 exit

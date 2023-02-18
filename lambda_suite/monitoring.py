@@ -25,8 +25,9 @@ resource_map = {
 def send_alarm(message):
     logger.warn('Sending alarm: "{}"'.format(message))
     client = boto3.client("sns")
-    client.publish(TopicArn=sns_arn, Message=message)
-    logger.warn("Sent alarm")
+    #disable alarms
+    #client.publish(TopicArn=sns_arn, Message=message)
+    #logger.warn("Sent alarm")
 
 
 def health_check_databases(event, context):

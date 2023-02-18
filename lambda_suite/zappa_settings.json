@@ -1,17 +1,20 @@
 {
     "base": {
         "project_name": "gdqstatus",
-        "aws_region": "us-east-1",
-        "vpc_config": {},
+        "aws_region": "eu-central-1",
+        "vpc_config": {
+            "SubnetIds": [ "subnet-03f17ca0002780708" ],
+            "SecurityGroupIds": [ "sg-0ad3d819b69a825ce" ]
+        },
         "tags": {
             "project": "gdqstatus"
         },
-        "runtime": "python3.6"
+        "runtime": "python3.9"
     },
     "dev": {
         "extends": "base",
         "app_function": "api.app",
-        "s3_bucket": "gdqstatus-dev-zappa-deployments",
+        "s3_bucket": "gdqstatus-development-zappa-deployments",
         "cors": true,
         "debug": true,
         "environment_variables": {
@@ -21,12 +24,12 @@
     "prod": {
         "extends": "dev",
         "app_function": "api.app",
-        "s3_bucket": "gdqstatus-zappa-deployments",
-        "certificate_arn": "arn:aws:acm:us-east-1:847166266056:certificate/3d405657-34e0-4b58-8c79-6b0dd52b3cfe",
-        "domain": "api.gdqstat.us",
-        "debug": false,
+        "s3_bucket": "gdqstatus-production-zappa-deployments",
+        "certificate_arn": "arn:aws:acm:us-east-1:512361702270:certificate/c4f66b11-9593-49ea-a8ad-a519c5862266",
+        "domain": "api.gdqstats.com",
+        "debug": true,
         "environment_variables": {
-            "S3_CACHE_BUCKET": "storage.api.gdqstat.us"
+            "S3_CACHE_BUCKET": "storage.gdqstats.com"
         }
     },
     "cache_databases": {
@@ -70,13 +73,16 @@
             }
         ],
         "environment_variables": {
-            "S3_CACHE_BUCKET": "storage.api.gdqstat.us"
+            "S3_CACHE_BUCKET": "storage.gdqstats.com"
         },
-        "s3_bucket": "gdqstatus-zappa-deployments",
-        "debug": false,
+        "s3_bucket": "gdqstatus-production-zappa-deployments",
+        "debug": true,
         "apigateway_enabled": false,
-        "timeout_seconds": 15,
-        "vpc_config": {}
+        "timeout_seconds": 60,
+        "vpc_config": {
+            "SubnetIds": [ "subnet-03f17ca0002780708" ],
+            "SecurityGroupIds": [ "sg-0ad3d819b69a825ce" ]
+        }
     },
     "monitoring_databases": {
         "extends": "base",
