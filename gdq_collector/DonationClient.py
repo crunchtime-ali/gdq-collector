@@ -18,8 +18,9 @@ DonationResult.__new__.__defaults__ = (None,) * len(DonationResult._fields)
 class DonationClient:
     total_donations_re = re.compile(r"\$(\S+)")
     total_donators_re = re.compile(r"\((\d+)\)")
-    max_donation_re = re.compile(r"\$(.+)/\$.+/\$.+")
-    avg_donation_re = re.compile(r"\$.+/\$(.+)/\$(.+)")
+    # changes for ESA 2023
+    max_donation_re = re.compile(r"\$(.+)/\$.+")
+    avg_donation_re = re.compile(r"\$.+/\$(.+)")
 
     def _get_page(self):
         """ Explicit get_page function to allow mocking in tests """
