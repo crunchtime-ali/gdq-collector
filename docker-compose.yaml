@@ -48,6 +48,12 @@ services:
     depends_on:
       - db
 
+  donations2:
+    command: python -m gdq_collector --tracker=donations2 --cloudwatch
+    build: .
+    depends_on:
+      - db
+
   donation_messages:
     command: python -m gdq_collector --tracker=donation_messages --cloudwatch
     build: .

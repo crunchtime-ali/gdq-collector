@@ -25,6 +25,9 @@ SCHEDULE_URL = "https://gamesdonequick.com/schedule"
 DONATION_INDEX_URL = (
      "https://donations.esamarathon.com/donations/esaw23s1"
 )
+DONATION_INDEX_URL2 = (
+     "https://donations.esamarathon.com/donations/esaw23s2"
+)
 # "https://gamesdonequick.com/tracker/donations/{}".format(EVENT_SHORTHAND)
 DONATION_DETAIL_URL = "https://donations.esamarathon.com/donation"
 #DONATION_DETAIL_URL = "https://gamesdonequick.com/tracker/donation"

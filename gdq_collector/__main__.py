@@ -20,7 +20,8 @@ from boto3.session import Session
 logger = logging.getLogger("gdq_collector")
 
 # Setup clients
-donations = DonationClient()
+donations = DonationClient(donation_index_url=settings.DONATION_INDEX_URL)
+donations2 = DonationClient(donation_index_url=settings.DONATION_INDEX_URL2)
 tracker = TrackerClient()
 schedule = ScheduleClient()
 twitter = TwitterClient(tags=settings.TWITTER_TAGS)
@@ -43,15 +44,15 @@ def _connect_to_postgres():
 # Setup db connection (retry up to 10 times)
 conn = _connect_to_postgres()
 
-def results_to_psql(tweets, viewers, viewers2, chats, chats2, donators, donations):
+def results_to_psql(tweets, viewers, viewers2, chats, chats2, donators, donators2, donations, donations2):
     """
     Takes results of refresh and inserts them into a new row in the
     timeseries database
     """
     SQL = """
         INSERT into gdq_timeseries (time, num_viewers, num_viewers_2, num_tweets,
-            num_chats, num_chats_2, num_donations, total_donations)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+            num_chats, num_chats_2, num_donations, num_donations2, total_donations, total_donations2)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (time) DO UPDATE SET
             num_viewers=GREATEST(
                 gdq_timeseries.num_viewers, excluded.num_viewers),
@@ -65,8 +66,12 @@ def results_to_psql(tweets, viewers, viewers2, chats, chats2, donators, donation
                 gdq_timeseries.num_chats2, excluded.num_chats2),
             num_donations=GREATEST(
                 gdq_timeseries.num_donations, excluded.num_donations),
+            num_donations2=GREATEST(
+                gdq_timeseries.num_donations2, excluded.num_donations2),
             total_donations=GREATEST(
                 gdq_timeseries.total_donations, excluded.total_donations);
+            total_donations2=GREATEST(
+                gdq_timeseries.total_donations2, excluded.total_donations2);
     """
 
     data = (
@@ -77,7 +82,9 @@ def results_to_psql(tweets, viewers, viewers2, chats, chats2, donators, donation
         chats,
         chats2,
         donators,
+        donators2,
         donations,
+        donations2,
     )
     try:
         cur = conn.cursor()
@@ -178,6 +185,7 @@ def save_chats(chats):
 def refresh_timeseries():
     """ Polls clients for new stat data and inserts timeseries entry to db """
     curr_d = utils.try_execute(donations.scrape, DonationResult())
+    curr_d2 = utils.try_execute(donations2.scrape, DonationResult())
     num_tweets = twitter.num_tweets()
     viewers = twitch.get_num_viewers()
     viewers2 = twitch2.get_num_viewers()
@@ -190,7 +198,9 @@ def refresh_timeseries():
         chats,
         chats2,
         curr_d.total_donators,
+        curr_d2.total_donators,
         curr_d.total_donations,
+        curr_d2.total_donations,
     )
     logger.info("Refreshed time series data")
 

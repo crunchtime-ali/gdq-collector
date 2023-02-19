@@ -2,7 +2,6 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from collections import namedtuple
-from .settings import DONATION_INDEX_URL
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,6 +15,9 @@ DonationResult.__new__.__defaults__ = (None,) * len(DonationResult._fields)
 
 
 class DonationClient:
+    def __init__(self, donation_index_url):
+        self.donation_index_url = donation_index_url
+
     total_donations_re = re.compile(r"\$(\S+)")
     total_donators_re = re.compile(r"\((\d+)\)")
     # changes for ESA 2023
@@ -24,7 +26,7 @@ class DonationClient:
 
     def _get_page(self):
         """ Explicit get_page function to allow mocking in tests """
-        req = requests.get(DONATION_INDEX_URL)
+        req = requests.get(self.donation_index_url)
         req.raise_for_status()
         return req.text
 
