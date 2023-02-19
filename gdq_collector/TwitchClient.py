@@ -11,12 +11,13 @@ MAX_CHATS_SAVED = 100000
 
 class TwitchClient(irc.client.SimpleIRCClient):
 
-    def __init__(self):
+    def __init__(self, twitch_channel):
         self._message_count = 0
         self._channel_id = None
         self._chats = []
         self._exponential_backoff = 0
         irc.client.SimpleIRCClient.__init__(self)
+        self.twitch_channel = twitch_channel
 
     def connect(self):
         if self._exponential_backoff > 0:
@@ -39,7 +40,7 @@ class TwitchClient(irc.client.SimpleIRCClient):
             password=credentials.twitch["oauth"],
         )
         logger.info("Connected to IRC server: %s" % settings.TWITCH_HOST)
-        self.connection.join(self._to_irc_chan(settings.TWITCH_CHANNEL))
+        self.connection.join(self._to_irc_chan(self.twitch_channel))
 
     def process(self):
         """
@@ -104,7 +105,7 @@ class TwitchClient(irc.client.SimpleIRCClient):
         req = requests.get(
             "https://api.twitch.tv/helix/streams",
             headers=headers,
-            params={"user_login": self._to_url_chan(settings.TWITCH_CHANNEL)},
+            params={"user_login": self._to_url_chan(self.twitch_channel)},
         )
 
         data = req.json()

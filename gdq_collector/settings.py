@@ -9,6 +9,7 @@ TWITTER_TAGS = [
     "european speedrun assembly",
 ]
 TWITCH_CHANNEL = "esamarathon"
+TWITCH_CHANNEL2 = "esamarathon2"
 TWITCH_HOST = "irc.twitch.tv"
 TWITCH_PORT = 6667
 

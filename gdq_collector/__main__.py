@@ -24,7 +24,8 @@ donations = DonationClient()
 tracker = TrackerClient()
 schedule = ScheduleClient()
 twitter = TwitterClient(tags=settings.TWITTER_TAGS)
-twitch = TwitchClient()
+twitch = TwitchClient(twitch_channel=settings.TWITCH_CHANNEL)
+twitch2 = TwitchClient(twitch_channel=settings.TWITCH_CHANNEL2)
 
 
 def _connect_to_postgres():
@@ -42,25 +43,26 @@ def _connect_to_postgres():
 # Setup db connection (retry up to 10 times)
 conn = _connect_to_postgres()
 
-
-def results_to_psql(tweets, viewers, chats, emotes, donators, donations):
+def results_to_psql(tweets, viewers, viewers2, chats, chats2, donators, donations):
     """
     Takes results of refresh and inserts them into a new row in the
     timeseries database
     """
     SQL = """
-        INSERT into gdq_timeseries (time, num_viewers, num_tweets,
-            num_chats, num_emotes, num_donations, total_donations)
+        INSERT into gdq_timeseries (time, num_viewers, num_viewers_2, num_tweets,
+            num_chats, num_chats_2, num_donations, total_donations)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (time) DO UPDATE SET
             num_viewers=GREATEST(
                 gdq_timeseries.num_viewers, excluded.num_viewers),
+            num_viewers2=GREATEST(
+                gdq_timeseries.num_viewers2, excluded.num_viewers2),
             num_tweets=GREATEST(
                 gdq_timeseries.num_tweets, excluded.num_tweets),
             num_chats=GREATEST(
                 gdq_timeseries.num_chats, excluded.num_chats),
-            num_emotes=GREATEST(
-                gdq_timeseries.num_emotes, excluded.num_emotes),
+            num_chats2=GREATEST(
+                gdq_timeseries.num_chats2, excluded.num_chats2),
             num_donations=GREATEST(
                 gdq_timeseries.num_donations, excluded.num_donations),
             total_donations=GREATEST(
@@ -70,9 +72,10 @@ def results_to_psql(tweets, viewers, chats, emotes, donators, donations):
     data = (
         utils.get_truncated_time(),
         viewers,
+        viewers2,
         tweets,
         chats,
-        emotes,
+        chats2,
         donators,
         donations,
     )
@@ -177,12 +180,15 @@ def refresh_timeseries():
     curr_d = utils.try_execute(donations.scrape, DonationResult())
     num_tweets = twitter.num_tweets()
     viewers = twitch.get_num_viewers()
-    chats, emotes = twitch.get_message_count(), 0
+    viewers2 = twitch2.get_num_viewers()
+    chats = twitch.get_message_count()
+    chats2 = twitch2.get_message_count()
     results_to_psql(
         num_tweets,
         viewers,
+        viewers2,
         chats,
-        emotes,
+        chats2,
         curr_d.total_donators,
         curr_d.total_donations,
     )
@@ -198,6 +204,7 @@ def refresh_tweets():
 
 
 def refresh_chats():
+    # Currenty only saving chats for a single channel
     logger.info("Polling clients for chat messages to save")
     chats = twitch.get_chats()
     logger.info("Saving {} chats".format(len(chats)))
@@ -296,6 +303,7 @@ def refresh_tracker_donation_messages():
 TRACKERS = {
     "twitter": (refresh_tweets, 1, False),
     "twitch": (refresh_chats, 1, False),
+    "twitch2": (refresh_chats, 1, False),
     "timeseries": (refresh_timeseries, 1, False),
     "schedule": (refresh_schedule, 10, True),
     "donations": (refresh_tracker_donations, 20, True),
@@ -349,6 +357,10 @@ if __name__ == "__main__":
         # Setup connection to twitch IRC channel
         twitch.connect()
 
+    if args.tracker in ["timeseries", "twitch2"] or args.tracker is None:
+        # Setup connection to twitch IRC channel
+        twitch2.connect()
+
     # Add refresh jobs to scheduler
     scheduler = BackgroundScheduler()
     if args.tracker:
@@ -373,6 +385,7 @@ if __name__ == "__main__":
     try:
         scheduler.start()
         twitch.start()
+        twitch2.start()
     except KeyboardInterrupt:
         logger.info("Got SIGTERM! Terminating...")
         scheduler.shutdown(wait=False)

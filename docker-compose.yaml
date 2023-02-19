@@ -30,11 +30,17 @@ services:
     depends_on:
       - db
 
-  schedule:
+  twitch2:
     build: .
-    command: python -m gdq_collector --tracker=schedule --cloudwatch
+    command: python -m gdq_collector --tracker=twitch2 --cloudwatch
     depends_on:
       - db
+
+#  schedule:
+#    build: .
+#    command: python -m gdq_collector --tracker=schedule --cloudwatch
+#    depends_on:
+#      - db
 
   donations:
     command: python -m gdq_collector --tracker=donations --cloudwatch
