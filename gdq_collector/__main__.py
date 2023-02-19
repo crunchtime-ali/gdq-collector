@@ -51,7 +51,7 @@ def results_to_psql(tweets, viewers, viewers2, chats, chats2, donators, donators
     """
     SQL = """
         INSERT into gdq_timeseries (time, num_viewers, num_viewers2, num_tweets,
-            num_chats, num_chats_2, num_donations, num_donations2, total_donations, total_donations2)
+            num_chats, num_chats2, num_donations, num_donations2, total_donations, total_donations2)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (time) DO UPDATE SET
             num_viewers=GREATEST(
