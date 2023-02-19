@@ -69,7 +69,7 @@ def results_to_psql(tweets, viewers, viewers2, chats, chats2, donators, donators
             num_donations2=GREATEST(
                 gdq_timeseries.num_donations2, excluded.num_donations2),
             total_donations=GREATEST(
-                gdq_timeseries.total_donations, excluded.total_donations);
+                gdq_timeseries.total_donations, excluded.total_donations),
             total_donations2=GREATEST(
                 gdq_timeseries.total_donations2, excluded.total_donations2);
     """
