@@ -43,15 +43,15 @@ def _connect_to_postgres():
 conn = _connect_to_postgres()
 
 
-def results_to_psql(tweets, viewers, chats, emotes, donators, donations):
+def results_to_psql(tweets, viewers, chats, donators, donations):
     """
     Takes results of refresh and inserts them into a new row in the
     timeseries database
     """
     SQL = """
         INSERT into gdq_timeseries (time, num_viewers, num_tweets,
-            num_chats, num_emotes, num_donations, total_donations)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+            num_chats, num_donations, total_donations)
+        VALUES (%s, %s, %s, %s, %s, %s)
         ON CONFLICT (time) DO UPDATE SET
             num_viewers=GREATEST(
                 gdq_timeseries.num_viewers, excluded.num_viewers),
@@ -59,8 +59,6 @@ def results_to_psql(tweets, viewers, chats, emotes, donators, donations):
                 gdq_timeseries.num_tweets, excluded.num_tweets),
             num_chats=GREATEST(
                 gdq_timeseries.num_chats, excluded.num_chats),
-            num_emotes=GREATEST(
-                gdq_timeseries.num_emotes, excluded.num_emotes),
             num_donations=GREATEST(
                 gdq_timeseries.num_donations, excluded.num_donations),
             total_donations=GREATEST(
@@ -72,7 +70,6 @@ def results_to_psql(tweets, viewers, chats, emotes, donators, donations):
         viewers,
         tweets,
         chats,
-        emotes,
         donators,
         donations,
     )
@@ -182,7 +179,6 @@ def refresh_timeseries():
         num_tweets,
         viewers,
         chats,
-        emotes,
         curr_d.total_donators,
         curr_d.total_donations,
     )
