@@ -7,7 +7,6 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
       num_viewers INTEGER,
       num_tweets INTEGER,
       num_chats INTEGER,
-      num_emotes INTEGER,
       num_donations INTEGER,
       total_donations NUMERIC(20, 2)
   );
