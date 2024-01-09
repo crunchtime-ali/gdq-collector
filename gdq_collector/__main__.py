@@ -172,7 +172,8 @@ def save_chats(chats):
 def refresh_timeseries():
     """ Polls clients for new stat data and inserts timeseries entry to db """
     curr_d = utils.try_execute(donations.scrape, DonationResult())
-    num_tweets = twitter.num_tweets()
+    # disable twitter
+    num_tweets = 0
     viewers = twitch.get_num_viewers()
     chats, emotes = twitch.get_message_count(), 0
     results_to_psql(
@@ -336,10 +337,10 @@ if __name__ == "__main__":
         logging.getLogger("apscheduler").addHandler(handler)
 
     # Setup Twitter if not disabled
-    if args.tracker in ["timeseries", "twitter"] or args.tracker is None:
-        twitter.start()
-    else:
-        logger.info("Not starting TwitterClient")
+    #if args.tracker in ["timeseries", "twitter"] or args.tracker is None:
+    #    twitter.start()
+    #else:
+    #    logger.info("Not starting TwitterClient")
 
     if args.tracker in ["timeseries", "twitch"] or args.tracker is None:
         # Setup connection to twitch IRC channel
