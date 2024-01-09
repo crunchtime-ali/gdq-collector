@@ -1,5 +1,5 @@
 TWITTER_TAGS = [
-    "sgdq2023",
+    "agdq2024",
     "gamesdonequick",
     "gamesdonequick.com",
     "agdq",
@@ -14,7 +14,7 @@ TWITCH_HOST = "irc.twitch.tv"
 TWITCH_PORT = 6667
 
 # Update this value to change the current event:
-EVENT_SHORTHAND = "SGDQ2023"
+EVENT_SHORTHAND = "AGDQ2024"
 
 # The following should stay pretty stable between events
 DONATION_URL = (
