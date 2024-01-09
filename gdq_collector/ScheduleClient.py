@@ -51,6 +51,14 @@ class ScheduleClient:
 
             title = row.find_all("td", attrs={"class": None})[0].text
 
+            # Checkpoints only have setup time but no actual runtime
+            if title == 'The Checkpoint':
+                setup_time_text = row.find_all("td", attrs={"class": None})[2]
+                setup_time = setup_time_text.text.strip()
+                # We use the last 7 characters to prevent to remove the font awesome icon
+                # before the setup time
+                duration=setup_time[-7:]
+
             game = ScheduleItem(
                 title=title,
                 duration=duration,
